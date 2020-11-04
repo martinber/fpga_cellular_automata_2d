@@ -120,6 +120,8 @@ export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
 TCPIP
 -----
 
+USAR Verilog en vez de VHDL no me acuerdo donde
+
 Abierto hls
 Creado proyecto
 Nombre: "hls_ips"
@@ -157,11 +159,28 @@ Si hay errores con clock:
     Click derecho en bloque > Cusrtomize > PS/PL configuration > AXI non-secure > GP Master
     Desactivar interfaz
 
+Generate bitstream (boton al lado de play)
 Sources > click derecho en tcpip_main > create hdl wrapper
+File > Export > Export Hardware
+Seleccionar Include bitstream
 
 
 Tools > Launch Vitis
 Workspace poner en carpeta "sdk"
 Create platform project, nombre "tcpip_platform"
 Create from hardware specificationn (XSA)
+Seleccionar ipi/tcpip_main_wrapper.xsa
+
+Board Support Package. Apretar boton "Modify BSP Settings..."
+En Overview, activar "lwip211" si se va a usar TCPIP
+Apretar ok
+Board Support Package. Apretar boton "Modify BSP Settings..."
+Ir a opciones de lwip y desactivar las dos opciones en DHCP. Y poner API mode en SOCKET
+En el Assistant, apretar martillo para hacer build
+
+File > New > Application Project, nombre "tcpip_application"
+Seleccionar plataforma "tcpip_platform"
+Seleccionar C++
+
+
 
