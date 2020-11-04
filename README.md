@@ -1,4 +1,167 @@
+2D cellular automata
+====================
+
+Martin Bernardi
+
+-------
+
 Deadline: Last lecture
 
 Do not use the Xilinx provided opencv. Otherwise use intaleed opencv. Maybe
 create python script to save image as raw file
+
+Notes
+=====
+
+Directories
+---------
+
+- hls_ips
+  - hls_ip_1
+    - src
+    - solution1
+    - solution2
+- vivado_ipi_src
+- vivado_ipi
+- vitis_sdk
+
+```
+
+berma11@VLSI-01:~/Desktop/hls/projects/vector_mult/vector_mult_hls/src$ cat /home/shared/vivado_2019.2.sh 
+export XILINXD_LICENSE_FILE=2100@atlas.itk.ppke.hu
+source /opt/Xilinx/Vivado/2019.2/settings64.sh
+vivado
+
+berma11@VLSI-01:~/Desktop/hls/projects/vector_mult/vector_mult_hls/src$ cat /home/shared/hls_2019.2.sh 
+export LM_LICENSE_FILE=2100@atlas.itk.ppke.hu
+source /opt/Xilinx/Vivado/2019.2/settings64.sh
+vivado_hls
+
+berma11@VLSI-01:~/Desktop/hls/projects/vector_mult/vector_mult_hls/src$ export LM_LICENSE_FILE=2100@atlas.itk.ppke.hu
+berma11@VLSI-01:~/Desktop/hls/projects/vector_mult/vector_mult_hls/src$ source /opt/Xilinx/Vivado/2019.2/settings64.sh
+
+cd a la carpeta principal del proyecto (no a la _hw)
+
+vivado_hls -i
+
+Pegar lineas de los script.tcl de cada solution
+
+quit
+
+berma11@VLSI-01:~/Desktop/hls/projects/vector_mult/vector_mult_hls/src$ vivado_hls
+
+Abrir proyecto
+
+Run synthesis on solutions
+C/RTL cosiumlation
+   Dump trace: Port
+Open wave view
+
+Compare solutions
+
+
+Solution > Export Solution...
+abrir "vivado"
+
+Crear proyecto
+Seleccionar board
+Create block design
+Add zynq
+Automate implementation?
+Doble click zynq. PS-PL interface
+   ACP port es coherente, accede cache. Vamos a usar los otros pero vamos a tener que flushear el cache (con FlushRange) e invalidarlo en el procesador (con Xil_DInvalidateRange). Solamente flushear e invalidar datos memaligneados
+Tools > Settings > IP > Repository > Add, seleccionar carpeta solucion
+Agregar block
+Run connection automation
+Save
+
+Sources
+Block design
+Surces > bloque > Create HDL Wrapper. Valores por defecto
+Generate bitstream, 4 cores
+Open implemented design
+Close implemented design
+File > Export > Hardware Design. Include bistream, adentro de _ipi dir
+File > Launch Vitis
+Crear directorio _sdk
+Create platform project _platform
+Archivoo .xsa en _ipi. Standalone por ahora, pero en el proyecto vamos a usar otro
+
+Build platform
+Carpeta export > hw? y esta el .h y .c de nuestro
+Carpeta ps7_cortex > include > xil_cache.h
+
+Create application project, _application
+Usar mi propia plataforma
+Seleccionar C o C++
+Importar codigo del test_bench desde carpeta src > import sources > ir a _hls/src . OK, seleccionar los .cpp del test_bench
+
+Debug > Build debug application
+Prender FPGA
+Abrir serial ttyACM0, 115200
+Debug > Launch on Hardware
+
+Error debian
+------------
+
+
+sudo ln -s /usr/lib/x86_64-linux-gnu/crt1.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
+sudo ln -s /usr/lib/x86_64-linux-gnu/crti.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
+sudo ln -s /usr/lib/x86_64-linux-gnu/crtn.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
+
+» ls /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
+32/      crtbegin.o   crtbeginT.o  crtendS.o      crti.o@  crtprec32.o  crtprec80.o  include-fixed/  libgcc.a     libgcov.a
+crt1.o@  crtbeginS.o  crtend.o     crtfastmath.o  crtn.o@  crtprec64.o  include/     install-tools/  libgcc_eh.a  plugin/
+
+Al final se arreglo con 
+
+export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
+
+TCPIP
+-----
+
+Abierto hls
+Creado proyecto
+Nombre: "hls_ips"
+No agregado ningun archivo
+En part selection apretar ...
+Seleccionar zedboard zynq evaluation development kit
+COn explorador archivos crear carpata "src" en "hls_ips"
+Click derecho en Sources > New file
+   Agregar "tcpip.cpp", "tcpip.h"
+Click derecho en Test Bench > New file
+   Agregar "tcpip_tb.cpp"
+Escribir codigo
+Project\Project properties > Synthesis
+Set Top Function: tcpip_hw
+Run C/RTL cosimulation (boton de ok)
+Ver waveform (boton negro)
+Export RTL (boton de paquete)
+
+
+Abierto vivado
+Creado proyecto
+En carpeta ipi
+RTL project, do not include sources
+Board: zedboard
+Create block design
+Nombre: tcpip_main, en carpeta ipi_src
+Agregar un bloque Zinq apretando boton +
+Run block automation
+
+Tools > Settings > IP > Repository
+Apretar +
+Agregar hls_ips/solution1/impl
+
+Si hay errores con clock:
+    Click derecho en bloque > Cusrtomize > PS/PL configuration > AXI non-secure > GP Master
+    Desactivar interfaz
+
+Sources > click derecho en tcpip_main > create hdl wrapper
+
+
+Tools > Launch Vitis
+Workspace poner en carpeta "sdk"
+Create platform project, nombre "tcpip_platform"
+Create from hardware specificationn (XSA)
+
