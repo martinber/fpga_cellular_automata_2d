@@ -15,6 +15,7 @@ hls_ips/*/*/.autopilot/
 hls_ips/*/*/.debug/
 hls_ips/*/*/impl/
 hls_ips/*/*/sim/
+hls_ips/*/*/csim/
 hls_ips/*/*/*.aps
 hls_ips/*/*/*.funcunit
 hls_ips/*/*/*.directive

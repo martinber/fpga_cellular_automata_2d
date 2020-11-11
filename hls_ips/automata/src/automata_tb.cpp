@@ -82,6 +82,14 @@ void init_random_world(World *world) {
 	}
 }
 
+void init_empty_world(World *world) {
+	for (WLD_COORD y = 0; y < WLD_H; y++) {
+		for (WLD_COORD x = 0; x < WLD_W; x++) {
+			wld_set(world, x, y, 0);
+		}
+	}
+}
+
 /**
  * World with only three live cells.
  *
@@ -107,6 +115,8 @@ void init_blinker_world(World *world) {
 int unit_test(World *w_in) {
 	World w_out_sw;
 	World w_out_hw;
+	init_empty_world(&w_out_sw);
+	init_empty_world(&w_out_hw);
 
 	std::cout << "Input world:" << std::endl;
 	print_world(w_in);
