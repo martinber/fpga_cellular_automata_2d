@@ -3,58 +3,42 @@
 
 Martin Bernardi
 
--------
+
+General info
+------------
 
 Deadline: Last lecture
 
-Do not use the Xilinx provided opencv. Otherwise use intaleed opencv. Maybe
-create python script to save image as raw file
+- Do not use the Xilinx provided Opencv. Otherwise use intaleed opencv.
+- Maybe create python script to save image as raw file
+- Make it work at least in cosimulation. We can ask professor to use one of his
+    boards via teamviewer
 
--------
+Ask
+---
 
-Make it work at least in cosimulation. We can ask professor to use one of his
-boards via teamviewer
-
-
--------
-
-If we are using a nested loop to read elements, there might be an error because
-the compiler does not know if an element is used only once.
-
-If using linebuffer is used, we can use Vivado HLS
-
--------
-
-If you pipeline a loop with subloops, all the subloops will be unrolled.
-
-If you have 9 multiplications, it will be executed in parallel
-
-
--------
-
-How to generate the 3x3 part from a pixel.
-
-There are two loops, for rows and columns and will process one frame. There is
-another loop if processing several frames
-
-For the median it is better to have a 1 by 9 array
-
-If you have the 3x3 array. Write two loops where you put pixel by pixel the
-elements of the 3x3 into a 1x9 array
-
-Two nexted lopps for the image
-
-The to right structure is a 2x8 array. First copy lower to upper line, and then
-copy element to the place. And finally go to next column. Upper line is line 0
-and lower is 1.
-First copy the two elements to the 3x3 array
+- Use only one iterator instead of `x_in`, `x_out`, `y_in` ...??
+- Use more iterators instead of additions and subtractions?
 
 Notes
-=====
+-----
+
+Info heard
+~~~~~~~~~~
+
+- If we are using a nested loop to read elements, there might be an error because
+    the compiler does not know if an element is used only once.
+
+- If using linebuffer is used, we can use Vivado HLS
+
+- If you pipeline a loop with subloops, all the subloops will be unrolled.
+
+- If you have 9 multiplications, it will be executed in parallel
 
 Directories
----------
+~~~~~~~~~~~
 
+```
 - hls_ips
   - hls_ip_1
     - src
@@ -65,9 +49,8 @@ Directories
 - vitis_sdk
 ```
 
-
 Creating projects
------------------
+~~~~~~~~~~~~~~~~~
 
 ```
 
@@ -137,7 +120,7 @@ Seleccionar C++
 ```
 
 Running project from git
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 ```
 cd a la carpeta principal del proyecto (no a la _hw)
@@ -203,7 +186,7 @@ Debug > Launch on Hardware
 ```
 
 Error in debian
----------------
+~~~~~~~~~~~~~~~
 
 Done:
 

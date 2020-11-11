@@ -91,25 +91,24 @@ void init_empty_world(World *world) {
 }
 
 /**
- * World with only three live cells.
+ * World with some live cells.
  *
- * 0000..
- * 1110..
- * 0000..
- * ......
- * ......
- *
- * Needs at least size 9x9.
+ * Needs at least some size.
  */
-void init_blinker_world(World *world) {
+void init_test_world(World *world) {
 	for (WLD_COORD y = 0; y < WLD_H; y++) {
 		for (WLD_COORD x = 0; x < WLD_W; x++) {
 			wld_set(world, x, y, 0);
 		}
 	}
+	wld_set(world, 0, 0, 1);
+	wld_set(world, 1, 0, 1);
 	wld_set(world, 0, 1, 1);
 	wld_set(world, 1, 1, 1);
-	wld_set(world, 2, 1, 1);
+
+	wld_set(world, 5, 0, 1);
+	wld_set(world, 5, 1, 1);
+	wld_set(world, 5, 2, 1);
 }
 
 int unit_test(World *w_in) {
@@ -145,7 +144,7 @@ int main() {
 
 	World w_in;
 
-	init_blinker_world(&w_in);
+	init_test_world(&w_in);
 
 	int test_res = unit_test(&w_in);
 

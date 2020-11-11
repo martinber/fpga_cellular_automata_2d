@@ -77,12 +77,12 @@ int automata_hw(World *w_in, World *w_out) {
 	// Buffer with the last two rows
 	bool row_buf[WLD_W][2];
 	for (WLD_COORD i = 0; i < WLD_W; i++) {
-		row_buf[i][0] = 0;
+		row_buf[i][0] = 0; // TODO: Unnecessary?
 		row_buf[i][1] = 0;
 	}
 	// Buffer with the 3x3 neighborhood
 	bool neigh_buf[3][3] = {
-		{false, false, false},
+		{false, false, false}, // TODO: Unnecessary?
 		{false, false, false},
 		{false, false, false}
 	};
@@ -102,14 +102,6 @@ int automata_hw(World *w_in, World *w_out) {
 	bool finish = false;
 
 	while (!finish) {
-
-#ifdef DEBUG
-		print_state(
-			row_buf, neigh_buf, curr_in, w_in, w_out,
-			x_in, y_in, x_out, y_out, x_row_buf
-		);
-#endif
-
 		curr_in = wld_get(w_in, x_in, y_in);
 
 		// Operate in neighborhood
@@ -150,6 +142,16 @@ int automata_hw(World *w_in, World *w_out) {
 		row_buf[x_row_buf][0] = row_buf[x_row_buf][1];
 		row_buf[x_row_buf][1] = curr_in;
 
+
+
+#ifdef DEBUG
+		print_state(
+			row_buf, neigh_buf, curr_in, w_in, w_out,
+			x_in, y_in, x_out, y_out, x_row_buf
+		);
+#endif
+
+
 		// Iterate input coordinates
 
 		x_in++;
@@ -163,15 +165,15 @@ int automata_hw(World *w_in, World *w_out) {
 
 		// Iterate row buffer coordinates
 
-		x_row_buf++;
-		if (x_row_buf == WLD_W) {
-			x_row_buf = 0;
-		}
+		x_row_buf = x_in; // TODO: good idea?
 
 		// Iterate output coordinates
 
-		// TODO should be different
+		// TODO good idea?
 		x_out++;
+		if (y_in == 0 || (y_in == 1 && x_in < 3)) {
+			x_out = 0;
+		}
 		if (x_out == WLD_W) {
 			x_out = 0;
 			y_out++;
