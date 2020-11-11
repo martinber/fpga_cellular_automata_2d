@@ -3,74 +3,79 @@
 #include <vector>
 #include "automata.h"
 
-int automata_sw(int a, int b, int c);
-int unit_test(int a, int b, int c);
-int random_unit_test();
 
-int main() {
-	int a, b, c;
-	int test_res;
-	srand(3456);
-	a = 5;
-	b = 3;
-	c = 7;
-	std::cout << "Test vector: a: " << a << ", b: " << b << ", c: " << c << std::endl;
-	test_res = unit_test(a, b, c);
-	if (test_res) {
-		std::cout << "Test run failed!" << std::endl;
-		return test_res;
-	} else {
-		std::cout << "Test run OK!" << std::endl;
-	}
-
-	test_res = random_unit_test();
-	if (test_res) {
-		std::cout << "Test run failed!" << std::endl;
-		return test_res;
-	} else {
-		std::cout << "Test run OK!" << std::endl;
-	}
-
-	for (int i = 0; i < 10; i++) {
-		std::cout << "Test run: " << i << std::endl;
-		test_res = random_unit_test();
-		if (test_res) {
-			std::cout << "Test run failed!" << std::endl;
-			return test_res;
-		} else {
-			std::cout << "Test run OK!" << std::endl;
+int automata_sw(World *world_in, World *world_out) {
+	for (WORLD_COORD x = 0; x < WORLD_W; x++) {
+		for (WORLD_COORD y = 0; y < WORLD_H; y++) {
+			world_out->bit_array[x][y] = world_in->bit_array[x][y];
 		}
 	}
-	return test_res;
+	return 0;
 }
 
-int unit_test(int a, int b, int c) {
-	int res_original;
-	int res_fpga;
-	int test_res = 0;
-//	Call original function
-	res_original = automata_sw(a, b, c);
-//	Call FPGA optimized function
-	res_fpga = automata_hw(a, b, c);
-//	Compare results
-	if (res_original != res_fpga) {
-		std::cout << "Error! Expected: " << res_original << " got: " << res_fpga
-				<< std::endl;
-		test_res = 1;
+void print_world(World *world) {
+	for (WORLD_COORD y = 0; y < WORLD_H; y++) {
+		for (WORLD_COORD x = 0; x < WORLD_W; x++) {
+			if (world->bit_array[x][y]) {
+				std::cout << "1";
+			} else {
+				std::cout << ".";
+			}
+		}
+		std::cout << std::endl;
 	}
-	return test_res;
 }
 
-int random_unit_test() {
-	int a, b, c;
-//	Generate random input
-	a = rand() % 1024;
-	b = rand() % 1024;
-	c = rand() % 1024;
-	std::cout << "Test vector: a: " << a << ", b: " << b << ", c: " << c << std::endl;
-	return unit_test(a, b, c);
+void init_world(World *world) {
+	for (WORLD_COORD y = 0; y < WORLD_H; y++) {
+		for (WORLD_COORD x = 0; x < WORLD_W; x++) {
+			world->bit_array[x][y] = rand() % 2;
+		}
+	}
 }
 
-int automata_sw(int a, int b, int c) {
-	return a * b + c;
+int unit_test(World *world_in) {
+	World world_out_sw;
+	World world_out_hw;
+
+	std::cout << "Input world:" << std::endl;
+	print_world(world_in);
+
+	automata_sw(world_in, &world_out_sw);
+	automata_hw(world_in, &world_out_hw);
+
+	std::cout << "automata_sw output world:" << std::endl;
+	print_world(&world_out_sw);
+	std::cout << "automata_hw output world:" << std::endl;
+	print_world(&world_out_hw);
+
+	for (WORLD_COORD y = 0; y < WORLD_H; y++) {
+		for (WORLD_COORD x = 0; x < WORLD_W; x++) {
+			if (world_out_sw.bit_array[x][y] != world_out_hw.bit_array[x][y]) {
+				return FAIL;
+			}
+		}
+	}
+	return OK;
 }
+
+
+int main() {
+	srand(1234);
+
+	World world_in;
+
+	init_world(&world_in);
+
+	int test_res = unit_test(&world_in);
+
+	if (test_res == FAIL) {
+		std::cout << "Test run failed!" << std::endl;
+		return FAIL;
+	} else {
+		std::cout << "Test run OK!" << std::endl;
+	}
+
+	return OK;
+}
+
