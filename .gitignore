@@ -1,2 +1,23 @@
 vivado.jou
 vivado.log
+
+hls_ips/*/.apc/
+hls_ips/*/.cproject
+hls_ips/*/.project
+hls_ips/*/.settings/
+hls_ips/*/.vivado_hls_log_all.xml
+hls_ips/*/vivado_hls.app
+hls_ips/*/*.log
+hls_ips/vivado_hls.log
+
+# In solutions
+hls_ips/*/*/.autopilot/
+hls_ips/*/*/.debug/
+hls_ips/*/*/impl/
+hls_ips/*/*/sim/
+hls_ips/*/*/*.aps
+hls_ips/*/*/*.funcunit
+hls_ips/*/*/*.directive
+hls_ips/*/*/*.log
+hls_ips/*/*/*_data.json
+hls_ips/*/*/syn/

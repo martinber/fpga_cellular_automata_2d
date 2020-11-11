@@ -63,22 +63,83 @@ Directories
 - vivado_ipi_src
 - vivado_ipi
 - vitis_sdk
+```
+
+
+Creating projects
+-----------------
 
 ```
 
-berma11@VLSI-01:~/Desktop/hls/projects/vector_mult/vector_mult_hls/src$ cat /home/shared/vivado_2019.2.sh 
-export XILINXD_LICENSE_FILE=2100@atlas.itk.ppke.hu
-source /opt/Xilinx/Vivado/2019.2/settings64.sh
-vivado
+Abierto hls
+Creada carepeta "./hls_ips/"
+Creado proyecto
+Nombre: "automata", carpeta "./hls_ips"
+No agregado ningun archivo
+En part selection apretar ...
+Seleccionar zedboard zynq evaluation development kit
+COn explorador archivos crear carpata "src" en "automata"
+Click derecho en Sources > New file
+   Agregar "automata.cpp", "automata.h"
+Click derecho en Test Bench > New file
+   Agregar "automata_tb.cpp"
+Escribir codigo
+Project\Project properties > Synthesis
+Set Top Function: automata_hw
+Run C Synthesis (boton de play)
+Run C/RTL cosimulation (boton de ok)
+    USAR Verilog en vez de VHDL
+    Dumpl trace: port
+Ver waveform (boton negro)
+Export RTL (boton de paquete)
 
-berma11@VLSI-01:~/Desktop/hls/projects/vector_mult/vector_mult_hls/src$ cat /home/shared/hls_2019.2.sh 
-export LM_LICENSE_FILE=2100@atlas.itk.ppke.hu
-source /opt/Xilinx/Vivado/2019.2/settings64.sh
-vivado_hls
 
-berma11@VLSI-01:~/Desktop/hls/projects/vector_mult/vector_mult_hls/src$ export LM_LICENSE_FILE=2100@atlas.itk.ppke.hu
-berma11@VLSI-01:~/Desktop/hls/projects/vector_mult/vector_mult_hls/src$ source /opt/Xilinx/Vivado/2019.2/settings64.sh
+Abierto vivado
+Creado proyecto
+En carpeta ipi
+RTL project, do not include sources
+Board: zedboard
+Create block design
+Nombre: tcpip_main, en carpeta ipi_src
+Agregar un bloque Zinq apretando boton +
+Run block automation
 
+Tools > Settings > IP > Repository
+Apretar +
+Agregar hls_ips/solution1/impl
+
+Si hay errores con clock:
+    Click derecho en bloque > Cusrtomize > PS/PL configuration > AXI non-secure > GP Master
+    Desactivar interfaz
+
+Generate bitstream (boton al lado de play)
+Sources > click derecho en tcpip_main > create hdl wrapper
+File > Export > Export Hardware
+Seleccionar Include bitstream
+
+
+Tools > Launch Vitis
+Workspace poner en carpeta "sdk"
+Create platform project, nombre "tcpip_platform"
+Create from hardware specificationn (XSA)
+Seleccionar ipi/tcpip_main_wrapper.xsa
+
+Board Support Package. Apretar boton "Modify BSP Settings..."
+En Overview, activar "lwip211" si se va a usar TCPIP
+Apretar ok
+Board Support Package. Apretar boton "Modify BSP Settings..."
+Ir a opciones de lwip y desactivar las dos opciones en DHCP. Y poner API mode en SOCKET
+En el Assistant, apretar martillo para hacer build
+
+File > New > Application Project, nombre "tcpip_application"
+Seleccionar plataforma "tcpip_platform"
+Seleccionar C++
+```
+
+Running project from git
+------------------------
+
+```
 cd a la carpeta principal del proyecto (no a la _hw)
 
 vivado_hls -i
@@ -139,11 +200,14 @@ Debug > Build debug application
 Prender FPGA
 Abrir serial ttyACM0, 115200
 Debug > Launch on Hardware
+```
 
-Error debian
-------------
+Error in debian
+---------------
 
+Done:
 
+```
 sudo ln -s /usr/lib/x86_64-linux-gnu/crt1.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
 sudo ln -s /usr/lib/x86_64-linux-gnu/crti.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
 sudo ln -s /usr/lib/x86_64-linux-gnu/crtn.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
@@ -151,75 +215,11 @@ sudo ln -s /usr/lib/x86_64-linux-gnu/crtn.o /media/mbernardi/datos/extra/async/i
 » ls /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
 32/      crtbegin.o   crtbeginT.o  crtendS.o      crti.o@  crtprec32.o  crtprec80.o  include-fixed/  libgcc.a     libgcov.a
 crt1.o@  crtbeginS.o  crtend.o     crtfastmath.o  crtn.o@  crtprec64.o  include/     install-tools/  libgcc_eh.a  plugin/
+```
 
-Al final se arreglo con 
+In the end the fix was:
 
+```
 export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
-
-TCPIP
------
-
-USAR Verilog en vez de VHDL no me acuerdo donde
-
-Abierto hls
-Creado proyecto
-Nombre: "hls_ips"
-No agregado ningun archivo
-En part selection apretar ...
-Seleccionar zedboard zynq evaluation development kit
-COn explorador archivos crear carpata "src" en "hls_ips"
-Click derecho en Sources > New file
-   Agregar "tcpip.cpp", "tcpip.h"
-Click derecho en Test Bench > New file
-   Agregar "tcpip_tb.cpp"
-Escribir codigo
-Project\Project properties > Synthesis
-Set Top Function: tcpip_hw
-Run C/RTL cosimulation (boton de ok)
-Ver waveform (boton negro)
-Export RTL (boton de paquete)
-
-
-Abierto vivado
-Creado proyecto
-En carpeta ipi
-RTL project, do not include sources
-Board: zedboard
-Create block design
-Nombre: tcpip_main, en carpeta ipi_src
-Agregar un bloque Zinq apretando boton +
-Run block automation
-
-Tools > Settings > IP > Repository
-Apretar +
-Agregar hls_ips/solution1/impl
-
-Si hay errores con clock:
-    Click derecho en bloque > Cusrtomize > PS/PL configuration > AXI non-secure > GP Master
-    Desactivar interfaz
-
-Generate bitstream (boton al lado de play)
-Sources > click derecho en tcpip_main > create hdl wrapper
-File > Export > Export Hardware
-Seleccionar Include bitstream
-
-
-Tools > Launch Vitis
-Workspace poner en carpeta "sdk"
-Create platform project, nombre "tcpip_platform"
-Create from hardware specificationn (XSA)
-Seleccionar ipi/tcpip_main_wrapper.xsa
-
-Board Support Package. Apretar boton "Modify BSP Settings..."
-En Overview, activar "lwip211" si se va a usar TCPIP
-Apretar ok
-Board Support Package. Apretar boton "Modify BSP Settings..."
-Ir a opciones de lwip y desactivar las dos opciones en DHCP. Y poner API mode en SOCKET
-En el Assistant, apretar martillo para hacer build
-
-File > New > Application Project, nombre "tcpip_application"
-Seleccionar plataforma "tcpip_platform"
-Seleccionar C++
-
-
+```
 
