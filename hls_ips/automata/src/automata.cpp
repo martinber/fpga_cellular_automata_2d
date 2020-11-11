@@ -1,9 +1,9 @@
 #include "automata.h"
 
-int automata_hw(World *world_in, World *world_out) {
-	for (WORLD_COORD x = 0; x < WORLD_W; x++) {
-		for (WORLD_COORD y = 0; y < WORLD_H; y++) {
-			world_out->bit_array[x][y] = world_in->bit_array[x][y];
+int automata_hw(World *w_in, World *w_out) {
+	for (WLD_COORD x = 0; x < WLD_W; x++) {
+		for (WLD_COORD y = 0; y < WLD_H; y++) {
+			wld_set(w_out, x, y, wld_get(w_in, x, y));
 		}
 	}
 	return 0;
