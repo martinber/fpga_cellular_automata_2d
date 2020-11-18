@@ -5,8 +5,8 @@
 
 
 int automata_sw(World *w_in, World *w_out) {
-	for (WLD_COORD x = 0; x < WLD_W; x++) {
-		for (WLD_COORD y = 0; y < WLD_H; y++) {
+	for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
+		for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
 
 			char neighbors = 0;
 			if (x > 0 && y > 0) {
@@ -62,8 +62,8 @@ int automata_sw(World *w_in, World *w_out) {
 }
 
 void print_world(World *world) {
-	for (WLD_COORD y = 0; y < WLD_H; y++) {
-		for (WLD_COORD x = 0; x < WLD_W; x++) {
+	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
+		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
 			if (wld_get(world, x, y)) {
 				std::cout << "1";
 			} else {
@@ -75,16 +75,16 @@ void print_world(World *world) {
 }
 
 void init_random_world(World *world) {
-	for (WLD_COORD y = 0; y < WLD_H; y++) {
-		for (WLD_COORD x = 0; x < WLD_W; x++) {
+	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
+		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
 			wld_set(world, x, y, rand() % 2);
 		}
 	}
 }
 
 void init_empty_world(World *world) {
-	for (WLD_COORD y = 0; y < WLD_H; y++) {
-		for (WLD_COORD x = 0; x < WLD_W; x++) {
+	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
+		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
 			wld_set(world, x, y, 0);
 		}
 	}
@@ -96,8 +96,8 @@ void init_empty_world(World *world) {
  * Needs at least some size.
  */
 void init_test_world(World *world) {
-	for (WLD_COORD y = 0; y < WLD_H; y++) {
-		for (WLD_COORD x = 0; x < WLD_W; x++) {
+	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
+		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
 			wld_set(world, x, y, 0);
 		}
 	}
@@ -128,8 +128,8 @@ int unit_test(World *w_in) {
 	std::cout << "automata_hw output world:" << std::endl;
 	print_world(&w_out_hw);
 
-	for (WLD_COORD y = 0; y < WLD_H; y++) {
-		for (WLD_COORD x = 0; x < WLD_W; x++) {
+	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
+		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
 			if (wld_get(&w_out_sw, x, y) != wld_get(&w_out_hw, x, y)) {
 				return FAIL;
 			}

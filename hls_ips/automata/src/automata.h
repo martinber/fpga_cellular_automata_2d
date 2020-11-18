@@ -21,9 +21,9 @@
 #define WLD_H 8 // Has to be 2^WLD_H_DEPTH
 
 // Type used for world coordinates
-typedef unsigned char WLD_COORD;
-typedef ap_uint<WLD_W_DEPTH> WLD_X_COORD;
-typedef ap_uint<WLD_H_DEPTH> WLD_Y_COORD;
+typedef ap_uint<WLD_W_DEPTH+1> WLD_BIG_COORD; // Has extra space, because when writing loops you need for the condition
+typedef ap_uint<WLD_W_DEPTH> WLD_X_COORD; // Coordinates barely fits
+typedef ap_uint<WLD_H_DEPTH> WLD_Y_COORD; // Coordinates barely fits
 
 // Type used for boolean values of each cell
 typedef ap_uint<1> CELL;
@@ -38,7 +38,7 @@ struct World {
 	bool _bit_array[WLD_W][WLD_H];
 };
 
-inline bool wld_get(World *world, WLD_COORD x, WLD_COORD y) {
+inline bool wld_get(World *world, WLD_X_COORD x, WLD_Y_COORD y) {
 #ifdef DEBUG
 	assert(x < WLD_W && y < WLD_H);
 #endif
@@ -46,7 +46,7 @@ inline bool wld_get(World *world, WLD_COORD x, WLD_COORD y) {
 	return world->_bit_array[x][y];
 }
 
-inline void wld_set(World *world, WLD_COORD x, WLD_COORD y, bool value) {
+inline void wld_set(World *world, WLD_X_COORD x, WLD_Y_COORD y, bool value) {
 #ifdef DEBUG
 	assert(x < WLD_W && y < WLD_H);
 #endif
