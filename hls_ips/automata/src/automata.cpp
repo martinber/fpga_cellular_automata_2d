@@ -111,20 +111,13 @@ int automata_hw(World *w_in, World *w_out) {
 
 		// Operate in neighborhood
 
-		// TODO: Can do neighs += neigh_buf[0][0] + neigh_buf[0][1]...
 		// Or maybe think if I can do it with some combination of XOR?
-		char neighs = 0; // TODO can be smaller type
-		if (neigh_buf[0][0]) neighs++;
-		if (neigh_buf[0][1]) neighs++;
-		if (neigh_buf[0][2]) neighs++;
-		if (neigh_buf[1][0]) neighs++;
-		// Central
-		if (neigh_buf[1][2]) neighs++;
-		if (neigh_buf[2][0]) neighs++;
-		if (neigh_buf[2][1]) neighs++;
-		if (neigh_buf[2][2]) neighs++;
+		// TODO can be smaller type
+		char neighs = neigh_buf[0][0] + neigh_buf[0][1] + neigh_buf[0][2]
+					+ neigh_buf[1][0]   /* Central */   + neigh_buf[1][2]
+					+ neigh_buf[2][0] + neigh_buf[2][1] + neigh_buf[2][2];
 
-		if (neigh_buf[1][1]) { // Central
+		if (neigh_buf[1][1]) {
 			wld_set(w_out, x_out, y_out, neighs == 2 || neighs == 3);
 		} else {
 			wld_set(w_out, x_out, y_out, neighs == 3);
