@@ -9,7 +9,7 @@ add_files automata/src/automata.cpp
 add_files automata/src/automata.h
 add_files -tb automata/src/automata_tb.cpp
 open_solution "solution1"
-set_part {xc7z020clg484-1}
+set_part {xc7z020-clg484-1}
 create_clock -period 10 -name default
 #source "./automata/solution1/directives.tcl"
 csim_design

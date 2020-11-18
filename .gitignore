@@ -1,5 +1,8 @@
 vivado.jou
 vivado.log
+xrc.log
+*.backup.jou
+*.backup.log
 
 hls_ips/*/.apc/
 hls_ips/*/.cproject

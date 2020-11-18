@@ -1,11 +1,9 @@
-2D cellular automata
-====================
+# 2D cellular automata
 
 Martin Bernardi
 
 
-General info
-------------
+## General info
 
 Deadline: Last lecture
 
@@ -14,17 +12,25 @@ Deadline: Last lecture
 - Make it work at least in cosimulation. We can ask professor to use one of his
     boards via teamviewer
 
-Ask
----
+## Ask
 
-- Use only one iterator instead of `x_in`, `x_out`, `y_in` ...??
-- Use more iterators instead of additions and subtractions?
+- How to work efficiently with boolean data? Arrays of booleans are inneficient
+    in C and if sending data as uint8_t it is difficult to access individual bits.
+- It is better to:
+    - Use several incrementing iterators with different values? It will generate
+        several counters
+    - Use one iterator and do additions to it to determine other values? It will
+        generate several adders
+- Should change my while loop with conditions to a fixed length loop right? The
+    compiler detects the number of loops of a simple for loop?
+- Should we process the input data while we are receiving it from a stream?
+- How are we going to test the TCP/IP part without the board? If the project
+    stops in cosimulation, then we only need to work with Vivado HLS and we
+    don't need to create IP blocks in Vivado HLx, run Vitis, etc.
 
-Notes
------
+## Notes
 
 Info heard
-~~~~~~~~~~
 
 - If we are using a nested loop to read elements, there might be an error because
     the compiler does not know if an element is used only once.
@@ -35,8 +41,7 @@ Info heard
 
 - If you have 9 multiplications, it will be executed in parallel
 
-Directories
-~~~~~~~~~~~
+### Directories
 
 ```
 - hls_ips
@@ -49,8 +54,7 @@ Directories
 - vitis_sdk
 ```
 
-Creating projects
-~~~~~~~~~~~~~~~~~
+### Creating projects
 
 ```
 
@@ -119,8 +123,7 @@ Seleccionar plataforma "tcpip_platform"
 Seleccionar C++
 ```
 
-Running project from git
-~~~~~~~~~~~~~~~~~~~~~~~~
+### Running project from git
 
 ```
 cd a la carpeta principal del proyecto (no a la _hw)
@@ -185,8 +188,7 @@ Abrir serial ttyACM0, 115200
 Debug > Launch on Hardware
 ```
 
-Error in debian
-~~~~~~~~~~~~~~~
+### Error in debian
 
 Done:
 
