@@ -110,10 +110,10 @@ void init_test_world(World *world) {
 	wld_set(world, 5, 1, 1);
 	wld_set(world, 5, 2, 1);
 
-	wld_set(world, WLD_W - 2, WLD_H - 2, 1);
-	wld_set(world, WLD_W - 1, WLD_H - 2, 1);
-	wld_set(world, WLD_W - 2, WLD_H - 1, 1);
-	wld_set(world, WLD_W - 1, WLD_H - 1, 1);
+	//wld_set(world, WLD_W - 2, WLD_H - 2, 1);
+	//wld_set(world, WLD_W - 1, WLD_H - 2, 1);
+	//wld_set(world, WLD_W - 2, WLD_H - 1, 1);
+	//wld_set(world, WLD_W - 1, WLD_H - 1, 1);
 }
 
 int unit_test(World *w_in) {
