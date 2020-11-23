@@ -187,9 +187,12 @@ int automata_hw(World *w_in, World *w_out) {
 // Solution: axi_stream -------------------------------------------------
 
 int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
+#pragma HLS INTERFACE axis register both port=in_stream
+#pragma HLS INTERFACE axis register both port=out_stream
+#pragma HLS INTERFACE s_axilite port=return
 
 	// Buffer with the last two rows
-	static CELL row_buf[WLD_W][2];
+	static CELL row_buf[WLD_W][2]; // Static so it initializes to 0
 
 	// Buffer with the 3x3 neighborhood
 	CELL neigh_buf[3][3]; // Not necessary to init
