@@ -2,6 +2,7 @@
 #define AUTOMATA_H
 
 #include "ap_int.h"
+#include "hls_stream.h"
 
 // This flag is only useful in simulation or cosimulation
 #define DEBUG
@@ -35,7 +36,7 @@ typedef ap_uint<1> CELL;
  * later
  */
 struct World {
-	bool _bit_array[WLD_W][WLD_H];
+	CELL _bit_array[WLD_W][WLD_H];
 };
 
 inline bool wld_get(World *world, WLD_X_COORD x, WLD_Y_COORD y) {
@@ -55,6 +56,8 @@ inline void wld_set(World *world, WLD_X_COORD x, WLD_Y_COORD y, bool value) {
 }
 
 // The main function
-int automata_hw(World *world_in, World *world_out);
+//int automata_hw(World *world_in, World *world_out);
+int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream);
+
 
 #endif

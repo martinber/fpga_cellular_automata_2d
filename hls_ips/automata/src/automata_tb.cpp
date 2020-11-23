@@ -116,6 +116,26 @@ void init_test_world(World *world) {
 	//wld_set(world, WLD_W - 1, WLD_H - 1, 1);
 }
 
+void run_automata_hw(World *w_in, World *w_out) {
+	hls::stream<CELL> in_stream;
+	hls::stream<CELL> out_stream;
+
+	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
+		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
+			in_stream.write(wld_get(w_in, x, y));
+		}
+	}
+
+	automata_hw(in_stream, out_stream);
+	//automata_hw(w_in, w_out);
+
+	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
+		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
+			wld_set(w_out, x, y, out_stream.read());
+		}
+	}
+}
+
 int unit_test(World *w_in) {
 	World w_out_sw;
 	World w_out_hw;
@@ -126,7 +146,7 @@ int unit_test(World *w_in) {
 	print_world(w_in);
 
 	automata_sw(w_in, &w_out_sw);
-	automata_hw(w_in, &w_out_hw);
+	run_automata_hw(w_in, &w_out_hw);
 
 	std::cout << "automata_sw output world:" << std::endl;
 	print_world(&w_out_sw);
