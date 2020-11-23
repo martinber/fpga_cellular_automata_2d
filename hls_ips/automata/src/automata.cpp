@@ -72,6 +72,8 @@ void print_state(
 }
 #endif
 
+/* Solution: initial -------------------------------------------------
+
 int automata_hw(World *w_in, World *w_out) {
 
 	// Buffer with the last two rows
@@ -92,7 +94,7 @@ int automata_hw(World *w_in, World *w_out) {
 	y_loop: for (WLD_BIG_COORD y_in = 0; y_in < WLD_H + 1; y_in++) {
 		x_loop: for (WLD_BIG_COORD x_in = 0; x_in < WLD_W; x_in++) {
 
-			WLD_X_COORD x_row_buf = x_in; // TODO: useless
+			WLD_X_COORD x_row_buf = x_in;
 			WLD_X_COORD x_out = x_in - 2;
 			WLD_Y_COORD y_out = y_in - 1;
 
@@ -103,7 +105,7 @@ int automata_hw(World *w_in, World *w_out) {
 			// Or maybe think if I can do it with some combination of XOR?
 			// TODO can be smaller type
 			char neighs = neigh_buf[0][0] + neigh_buf[0][1] + neigh_buf[0][2]
-						+ neigh_buf[1][0]   /* Central */   + neigh_buf[1][2]
+						+ neigh_buf[1][0]                   + neigh_buf[1][2]
 						+ neigh_buf[2][0] + neigh_buf[2][1] + neigh_buf[2][2];
 
 			if (neigh_buf[1][1]) {
@@ -145,3 +147,83 @@ int automata_hw(World *w_in, World *w_out) {
 
 	return 0;
 }
+*/
+
+/* Solution: one_loop ------------------------------------------------- */
+
+int automata_hw(World *w_in, World *w_out) {
+
+	// Buffer with the last two rows
+	CELL row_buf[WLD_W][2];
+	for (WLD_BIG_COORD i = 0; i < WLD_W; i++) {
+		row_buf[i][0] = 0; // TODO: Unnecessary?
+		row_buf[i][1] = 0;
+	}
+	// Buffer with the 3x3 neighborhood
+	CELL neigh_buf[3][3];
+    // Not necessary to init
+
+	// Currently read value and coordinates
+	CELL curr_in = false;
+
+	bool finish = false;
+
+	// Goes an extra few loops to finish processing
+	main_loop: for (unsigned int i = 0; i < WLD_W * (WLD_H + 1); i++) {
+#pragma HLS PIPELINE
+		WLD_X_COORD x_in = i; // There is truncation but its ok
+		WLD_X_COORD y_in = i / WLD_W; // Divide and round down
+
+		WLD_X_COORD x_row_buf = x_in;
+		WLD_X_COORD x_out = x_in - 2;
+		WLD_Y_COORD y_out = y_in - 1;
+
+		curr_in = wld_get(w_in, x_in, y_in);
+
+		// Operate in neighborhood
+
+		// Or maybe think if I can do it with some combination of XOR?
+		// TODO can be smaller type
+		char neighs = neigh_buf[0][0] + neigh_buf[0][1] + neigh_buf[0][2]
+					+ neigh_buf[1][0]                   + neigh_buf[1][2]
+					+ neigh_buf[2][0] + neigh_buf[2][1] + neigh_buf[2][2];
+
+		if (neigh_buf[1][1]) {
+			wld_set(w_out, x_out, y_out, neighs == 2 || neighs == 3);
+		} else {
+			wld_set(w_out, x_out, y_out, neighs == 3);
+		}
+
+		// Update neigh_buf
+
+		// The compiler does not use a shift register here
+
+		shift_neigh: for (int i = 0; i < 2; i++) {
+#pragma HLS unroll
+			neigh_buf[i][0] = neigh_buf[i+1][0];
+			neigh_buf[i][1] = neigh_buf[i+1][1];
+			neigh_buf[i][2] = neigh_buf[i+1][2];
+		}
+
+		neigh_buf[2][0] = row_buf[x_row_buf][0];
+		neigh_buf[2][1] = row_buf[x_row_buf][1];
+		neigh_buf[2][2] = curr_in;
+
+		// Update row_buf
+
+		row_buf[x_row_buf][0] = row_buf[x_row_buf][1];
+		row_buf[x_row_buf][1] = curr_in;
+
+		// Print the state for debugging
+
+#ifdef DEBUG
+		print_state(
+			row_buf, neigh_buf, curr_in, w_in, w_out,
+			x_in, y_in, x_out, y_out, x_row_buf
+		);
+#endif
+	}
+
+	return 0;
+}
+
