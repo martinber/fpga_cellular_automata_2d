@@ -209,7 +209,9 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 
 	main_loop: for (unsigned int i = 0; i < WLD_W * (WLD_H + 1) + 2; i++) {
 #pragma HLS PIPELINE
-		curr_in = in_stream.read();
+		if (i < WLD_W * WLD_H) {
+			curr_in = in_stream.read();
+		}
 
 		// Operate in neighborhood
 
@@ -251,13 +253,17 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 			neigh_buf[i][2] = neigh_buf[i+1][2];
 		}
 
-		neigh_buf[2][0] = row_buf[x_row_buf][0];
-		neigh_buf[2][1] = row_buf[x_row_buf][1];
+		// Temporary variables, because we don't want to read from row_buf too many times
+		CELL row_buf_0 = row_buf[x_row_buf][0];
+		CELL row_buf_1 = row_buf[x_row_buf][1];
+
+		neigh_buf[2][0] = row_buf_0;
+		neigh_buf[2][1] = row_buf_1;
 		neigh_buf[2][2] = curr_in;
 
 		// Update row_buf
 
-		row_buf[x_row_buf][0] = row_buf[x_row_buf][1];
+		row_buf[x_row_buf][0] = row_buf_1;
 		row_buf[x_row_buf][1] = curr_in;
 
 		// Iterate row buffer coordinates
