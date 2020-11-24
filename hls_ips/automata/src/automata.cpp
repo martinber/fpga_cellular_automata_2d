@@ -203,23 +203,40 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 	// Current position in row_buf
 	WLD_X_COORD x_row_buf = 0;
 
+	// Current position in output image
+	WLD_X_COORD x_out = 0;
+	WLD_X_COORD y_out = 0;
+
 	main_loop: for (unsigned int i = 0; i < WLD_W * (WLD_H + 1) + 2; i++) {
 #pragma HLS PIPELINE
 		curr_in = in_stream.read();
 
 		// Operate in neighborhood
 
-		// Or maybe think if I can do it with some combination of XOR?
-		// TODO can be smaller type
-		char neighs = neigh_buf[0][0] + neigh_buf[0][1] + neigh_buf[0][2]
-					+ neigh_buf[1][0]                   + neigh_buf[1][2]
-					+ neigh_buf[2][0] + neigh_buf[2][1] + neigh_buf[2][2];
+		ap_uint<4> neighs = neigh_buf[0][0] + neigh_buf[0][1] + neigh_buf[0][2]
+					      + neigh_buf[1][0]                   + neigh_buf[1][2]
+					      + neigh_buf[2][0] + neigh_buf[2][1] + neigh_buf[2][2];
 
 		if (i > WLD_W + 1) {
-			if (neigh_buf[1][1]) {
-				out_stream.write(neighs == 2 || neighs == 3);
+			// If the input data reached the neigh_buf
+
+			if (x_out != 0 && x_out != WLD_W - 1
+					&& y_out != 0 && y_out != WLD_H - 1) {
+				// If it is not in margin
+
+				if (neigh_buf[1][1]) {
+					// If the cell was alive
+
+					out_stream.write(neighs == 2 || neighs == 3);
+				} else {
+					// If the cell was dead
+
+					out_stream.write(neighs == 3);
+				}
 			} else {
-				out_stream.write(neighs == 3);
+				// If it is in margin
+
+				out_stream.write(0); // Write margins as zero
 			}
 		}
 
@@ -249,6 +266,17 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 			x_row_buf = 0;
 		} else {
 			x_row_buf++;
+		}
+
+		// Iterate output image coordinates
+
+		if (x_out == WLD_W - 1) {
+			x_out = 0;
+			y_out++;
+		} else {
+			if (i > WLD_W + 1) {
+				x_out++;
+			}
 		}
 	}
 

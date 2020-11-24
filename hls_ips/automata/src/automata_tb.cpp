@@ -51,10 +51,14 @@ int automata_sw(World *w_in, World *w_out) {
 				}
 			}
 
-			if (wld_get(w_in, x, y)) {
-				wld_set(w_out, x, y, neighbors == 2 || neighbors == 3);
+			if (y > 0 && y < WLD_H - 1 && x > 0 && x < WLD_W - 1) {
+				if (wld_get(w_in, x, y)) {
+					wld_set(w_out, x, y, neighbors == 2 || neighbors == 3);
+				} else {
+					wld_set(w_out, x, y, neighbors == 3);
+				}
 			} else {
-				wld_set(w_out, x, y, neighbors == 3);
+				wld_set(w_out, x, y, 0); // Write 0 in margins
 			}
 		}
 	}
@@ -77,7 +81,11 @@ void print_world(World *world) {
 void init_random_world(World *world) {
 	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
 		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
-			wld_set(world, x, y, rand() % 2);
+			if (y > 0 && y < WLD_H - 1 && x > 0 && x < WLD_W - 1) {
+				wld_set(world, x, y, rand() % 2);
+			} else {
+				wld_set(world, x, y, 0); // Write 0 in margins
+			}
 		}
 	}
 }
@@ -101,19 +109,19 @@ void init_test_world(World *world) {
 			wld_set(world, x, y, 0);
 		}
 	}
-	wld_set(world, 0, 0, 1);
-	wld_set(world, 1, 0, 1);
-	wld_set(world, 0, 1, 1);
 	wld_set(world, 1, 1, 1);
+	wld_set(world, 2, 1, 1);
+	wld_set(world, 1, 2, 1);
+	wld_set(world, 2, 2, 1);
 
-	wld_set(world, 5, 0, 1);
 	wld_set(world, 5, 1, 1);
 	wld_set(world, 5, 2, 1);
+	wld_set(world, 5, 3, 1);
 
-	//wld_set(world, WLD_W - 2, WLD_H - 2, 1);
-	//wld_set(world, WLD_W - 1, WLD_H - 2, 1);
-	//wld_set(world, WLD_W - 2, WLD_H - 1, 1);
-	//wld_set(world, WLD_W - 1, WLD_H - 1, 1);
+	wld_set(world, WLD_W - 3, WLD_H - 3, 1);
+	wld_set(world, WLD_W - 2, WLD_H - 3, 1);
+	wld_set(world, WLD_W - 3, WLD_H - 2, 1);
+	wld_set(world, WLD_W - 2, WLD_H - 2, 1);
 }
 
 void run_automata_hw(World *w_in, World *w_out) {
@@ -169,7 +177,7 @@ int main() {
 
 	World w_in;
 
-	init_test_world(&w_in);
+	init_random_world(&w_in);
 
 	int test_res = unit_test(&w_in);
 
