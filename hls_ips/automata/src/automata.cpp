@@ -192,7 +192,8 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 #pragma HLS INTERFACE s_axilite port=return
 
 	// Buffer with the last two rows
-	static CELL row_buf[WLD_W][2]; // Static so it initializes to 0
+	CELL row_buf[WLD_W][2]; // Not necessary to init
+#pragma HLS ARRAY_RESHAPE variable=row_buf block factor=2 dim=1
 
 	// Buffer with the 3x3 neighborhood
 	CELL neigh_buf[3][3]; // Not necessary to init
@@ -243,8 +244,6 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 		}
 
 		// Update neigh_buf
-
-		// The compiler does not use a shift register here
 
 		shift_neigh: for (int i = 0; i < 2; i++) {
 #pragma HLS unroll
