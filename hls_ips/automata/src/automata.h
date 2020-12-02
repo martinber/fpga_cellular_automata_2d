@@ -15,15 +15,12 @@
 #define OK 0
 #define FAIL 1
 
-// World size has to be power of two because of optimizations
-// TODO: Check but it is no longer necessary
-#define WLD_W_DEPTH 5
-#define WLD_H_DEPTH 3
-#define WLD_W 32 // Has to be 2^WLD_W_DEPTH
-#define WLD_H 8 // Has to be 2^WLD_H_DEPTH
+#define WLD_W_DEPTH 8
+#define WLD_H_DEPTH 8
+#define WLD_W 250 // Has to be max 2^WLD_W_DEPTH
+#define WLD_H 250 // Has to be max 2^WLD_H_DEPTH
 
 // Type used for world coordinates
-// TODO: Change name
 typedef ap_uint<WLD_W_DEPTH+1> WLD_BIG_COORD; // Has extra space, because when writing loops you need for the condition
 typedef ap_uint<WLD_W_DEPTH> WLD_X_COORD; // Coordinates barely fits
 typedef ap_uint<WLD_H_DEPTH> WLD_Y_COORD; // Coordinates barely fits

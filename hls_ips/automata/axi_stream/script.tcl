@@ -5,8 +5,8 @@
 ############################################################
 open_project automata
 set_top automata_hw
-add_files automata/src/automata.h
 add_files automata/src/automata.cpp
+add_files automata/src/automata.h
 add_files -tb automata/src/automata_tb.cpp -cflags "-Wno-unknown-pragmas" -csimflags "-Wno-unknown-pragmas"
 open_solution "axi_stream"
 set_part {xc7z020-clg484-1}
