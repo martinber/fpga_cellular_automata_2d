@@ -3,6 +3,32 @@
 #include <vector>
 #include "automata.h"
 
+/*
+ * It represents the world of the game.
+ *
+ * There are getter and setter functions in case I change the representation
+ * later
+ */
+struct World {
+	CELL _bit_array[WLD_W][WLD_H];
+};
+
+inline bool wld_get(World *world, WLD_X_COORD x, WLD_Y_COORD y) {
+#ifdef DEBUG
+	assert(x < WLD_W && y < WLD_H);
+#endif
+
+	return world->_bit_array[x][y];
+}
+
+inline void wld_set(World *world, WLD_X_COORD x, WLD_Y_COORD y, bool value) {
+#ifdef DEBUG
+	assert(x < WLD_W && y < WLD_H);
+#endif
+
+	world->_bit_array[x][y] = value;
+}
+
 
 int automata_sw(World *w_in, World *w_out) {
 	for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {

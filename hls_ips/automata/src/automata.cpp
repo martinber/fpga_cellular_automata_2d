@@ -6,8 +6,7 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 #pragma HLS INTERFACE s_axilite port=return
 
 	// Buffer with the last two rows
-	CELL row_buf[WLD_W][2]; // Not necessary to init
-//#pragma HLS ARRAY_RESHAPE variable=row_buf block factor=2 dim=1
+	CELL row_buf[2][WLD_W];
 
 	// Buffer with the 3x3 neighborhood
 	CELL neigh_buf[3][3]; // Not necessary to init
@@ -22,6 +21,7 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 	WLD_X_COORD x_out = 0;
 	WLD_X_COORD y_out = 0;
 
+    // TODO: Use two loops
 	main_loop: for (unsigned int i = 0; i < WLD_W * (WLD_H + 1) + 2; i++) {
 #pragma HLS PIPELINE
 		if (i < WLD_W * WLD_H) {
@@ -34,6 +34,8 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 					      + neigh_buf[1][0]                   + neigh_buf[1][2]
 					      + neigh_buf[2][0] + neigh_buf[2][1] + neigh_buf[2][2];
 
+		CELL out;
+
 		if (i > WLD_W + 1) {
 			// If the input data reached the neigh_buf
 
@@ -44,18 +46,21 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 				if (neigh_buf[1][1]) {
 					// If the cell was alive
 
-					out_stream.write(neighs == 2 || neighs == 3);
+					out = neighs == 2 || neighs == 3;
 				} else {
 					// If the cell was dead
 
-					out_stream.write(neighs == 3);
+					out = neighs == 3;
 				}
 			} else {
 				// If it is in margin
 
-				out_stream.write(0); // Write margins as zero
+				out = 0; // Write margins as zero
 			}
+
+			out_stream.write(out);
 		}
+
 
 		// Update neigh_buf
 
@@ -67,8 +72,9 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 		}
 
 		// Temporary variables, because we don't want to read from row_buf too many times
-		CELL row_buf_0 = row_buf[x_row_buf][0];
-		CELL row_buf_1 = row_buf[x_row_buf][1];
+
+		CELL row_buf_0 = row_buf[0][x_row_buf];
+		CELL row_buf_1 = row_buf[1][x_row_buf];
 
 		neigh_buf[2][0] = row_buf_0;
 		neigh_buf[2][1] = row_buf_1;
@@ -76,8 +82,8 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 
 		// Update row_buf
 
-		row_buf[x_row_buf][0] = row_buf_1;
-		row_buf[x_row_buf][1] = curr_in;
+		row_buf[0][x_row_buf] = row_buf_1;
+		row_buf[1][x_row_buf] = curr_in;
 
 		// Iterate row buffer coordinates
 
