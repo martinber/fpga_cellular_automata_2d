@@ -124,32 +124,6 @@ void init_empty_world(World *world) {
 	}
 }
 
-/**
- * World with some live cells.
- *
- * Needs at least some size.
- */
-void init_test_world(World *world) {
-	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
-		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
-			wld_set(world, x, y, 0);
-		}
-	}
-	wld_set(world, 1, 1, 1);
-	wld_set(world, 2, 1, 1);
-	wld_set(world, 1, 2, 1);
-	wld_set(world, 2, 2, 1);
-
-	wld_set(world, 5, 1, 1);
-	wld_set(world, 5, 2, 1);
-	wld_set(world, 5, 3, 1);
-
-	wld_set(world, WLD_W - 3, WLD_H - 3, 1);
-	wld_set(world, WLD_W - 2, WLD_H - 3, 1);
-	wld_set(world, WLD_W - 3, WLD_H - 2, 1);
-	wld_set(world, WLD_W - 2, WLD_H - 2, 1);
-}
-
 void run_automata_hw(World *w_in, World *w_out) {
 	hls::stream<CELL> in_stream;
 	hls::stream<CELL> out_stream;
@@ -161,7 +135,6 @@ void run_automata_hw(World *w_in, World *w_out) {
 	}
 
 	automata_hw(in_stream, out_stream);
-	//automata_hw(w_in, w_out);
 
 	for (WLD_BIG_COORD y = 0; y < WLD_H; y++) {
 		for (WLD_BIG_COORD x = 0; x < WLD_W; x++) {
@@ -199,7 +172,6 @@ int unit_test(World *w_in) {
 
 
 int main() {
-	srand(1234);
 
 	World w_in;
 
