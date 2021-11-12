@@ -3,3 +3,5 @@
 ## Please DO NOT edit it.
 ## Copyright (C) 1986-2019 Xilinx, Inc. All Rights Reserved.
 ############################################################
+set_directive_pipeline "load_data/load_loop"
+set_directive_pipeline "save_data/save_loop"

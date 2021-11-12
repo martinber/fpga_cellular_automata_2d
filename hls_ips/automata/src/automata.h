@@ -19,10 +19,18 @@ typedef ap_uint<WLD_W_DEPTH> WLD_X_COORD; // Coordinates barely fits
 typedef ap_uint<WLD_H_DEPTH> WLD_Y_COORD; // Coordinates barely fits
 
 // Type used for boolean values of each cell
-typedef ap_uint<1> CELL;
+typedef int CELL;
+
+
+// Data structure to pass to HW function
+struct World {
+	CELL array[WLD_W][WLD_H];
+};
 
 // The main function
-//int automata_hw(World *world_in, World *world_out);
-int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream);
+void main_hw(CELL *w_in, CELL *w_out);
+//int main_hw(World *w_in, World *w_out);
+
+
 
 #endif

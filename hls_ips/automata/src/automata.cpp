@@ -1,9 +1,20 @@
 #include "automata.h"
 
-int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
-#pragma HLS INTERFACE axis register both port=in_stream
-#pragma HLS INTERFACE axis register both port=out_stream
-#pragma HLS INTERFACE s_axilite port=return
+void load_data(CELL *w_in, hls::stream<CELL> &stream) {
+
+	load_loop: for (int i = 0; i < WLD_H * WLD_W; i++) {
+		stream.write(w_in[i]);
+	}
+}
+
+void save_data(CELL *w_out, hls::stream<CELL> &stream) {
+
+	save_loop: for (int i = 0; i < WLD_H * WLD_W; i++) {
+		w_out[i] = stream.read();
+	}
+}
+
+void automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 
 	// Buffer with the last two rows
 	CELL row_buf[2][WLD_W];
@@ -65,7 +76,6 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 		// Update neigh_buf
 
 		shift_neigh: for (int i = 0; i < 2; i++) {
-#pragma HLS unroll
 			neigh_buf[i][0] = neigh_buf[i+1][0];
 			neigh_buf[i][1] = neigh_buf[i+1][1];
 			neigh_buf[i][2] = neigh_buf[i+1][2];
@@ -104,7 +114,17 @@ int automata_hw(hls::stream<CELL> &in_stream, hls::stream<CELL> &out_stream) {
 			}
 		}
 	}
-
-	return 0;
 }
 
+void main_hw(CELL *w_in, CELL *w_out) {
+#pragma HLS INTERFACE m_axi depth=62500 port=w_out
+#pragma HLS INTERFACE m_axi depth=62500 port=w_in
+#pragma HLS DATAFLOW
+
+	hls::stream<CELL> in_stream;
+	hls::stream<CELL> out_stream;
+
+	load_data(w_in, in_stream);
+	automata_hw(in_stream, out_stream);
+	save_data(w_out, out_stream);
+}
