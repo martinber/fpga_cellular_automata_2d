@@ -1,63 +1,37 @@
 # 2D cellular automata
 
-Martin Bernardi
+Game of Life implemented in FPGA using HLS (High Level Synthesis).
 
+It generates a random world, and runs only one iteration in software and in
+hardware to compare results. Only tested in simulation, not in real board.
 
-## General info
+It runs using one clock per pixel.
 
-Deadline: Last lecture
+## Debian error fix
 
-- Do not use the Xilinx provided Opencv. Otherwise use intaleed opencv.
-- Maybe create python script to save image as raw file
-- Make it work at least in cosimulation. We can ask professor to use one of his
-    boards via teamviewer
-
-## Ask
-
-- How to work efficiently with boolean data? Arrays of booleans are inneficient
-    in C and if sending data as uint8_t it is difficult to access individual bits.
-- It is better to:
-    - Use several incrementing iterators with different values? It will generate
-        several counters
-    - Use one iterator and do additions to it to determine other values? It will
-        generate several adders
-- Should change my while loop with conditions to a fixed length loop right? The
-    compiler detects the number of loops of a simple for loop?
-- Should we process the input data while we are receiving it from a stream?
-- How are we going to test the TCP/IP part without the board? If the project
-    stops in cosimulation, then we only need to work with Vivado HLS and we
-    don't need to create IP blocks in Vivado HLx, run Vitis, etc.
-
-## Notes
-
-Info heard
-
-- If we are using a nested loop to read elements, there might be an error because
-    the compiler does not know if an element is used only once.
-
-- If using linebuffer is used, we can use Vivado HLS
-
-- If you pipeline a loop with subloops, all the subloops will be unrolled.
-
-- If you have 9 multiplications, it will be executed in parallel
-
-### Directories
+Tried:
 
 ```
-- hls_ips
-  - hls_ip_1
-    - src
-    - solution1
-    - solution2
-- vivado_ipi_src
-- vivado_ipi
-- vitis_sdk
+sudo ln -s /usr/lib/x86_64-linux-gnu/crt1.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
+sudo ln -s /usr/lib/x86_64-linux-gnu/crti.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
+sudo ln -s /usr/lib/x86_64-linux-gnu/crtn.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
+
+» ls /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
+32/      crtbegin.o   crtbeginT.o  crtendS.o      crti.o@  crtprec32.o  crtprec80.o  include-fixed/  libgcc.a     libgcov.a
+crt1.o@  crtbeginS.o  crtend.o     crtfastmath.o  crtn.o@  crtprec64.o  include/     install-tools/  libgcc_eh.a  plugin/
 ```
 
-### Creating projects
+In the end the fix was:
 
 ```
+export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
+```
 
+## Notes in spanish
+
+Creating projects:
+
+```
 Abierto hls
 Creada carepeta "./hls_ips/"
 Creado proyecto
@@ -123,7 +97,7 @@ Seleccionar plataforma "tcpip_platform"
 Seleccionar C++
 ```
 
-### Running project from git
+Running project from git:
 
 ```
 cd a la carpeta principal del proyecto (no a la _hw)
@@ -186,25 +160,5 @@ Debug > Build debug application
 Prender FPGA
 Abrir serial ttyACM0, 115200
 Debug > Launch on Hardware
-```
-
-### Error in debian
-
-Done:
-
-```
-sudo ln -s /usr/lib/x86_64-linux-gnu/crt1.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
-sudo ln -s /usr/lib/x86_64-linux-gnu/crti.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
-sudo ln -s /usr/lib/x86_64-linux-gnu/crtn.o /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
-
-» ls /media/mbernardi/datos/extra/async/ipcv/fpga/xilinx/Vivado/2019.2/lnx64/tools/gcc/lib/gcc/x86_64-unknown-linux-gnu/4.6.3/
-32/      crtbegin.o   crtbeginT.o  crtendS.o      crti.o@  crtprec32.o  crtprec80.o  include-fixed/  libgcc.a     libgcov.a
-crt1.o@  crtbeginS.o  crtend.o     crtfastmath.o  crtn.o@  crtprec64.o  include/     install-tools/  libgcc_eh.a  plugin/
-```
-
-In the end the fix was:
-
-```
-export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LIBRARY_PATH
 ```
 
